@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Bot Config Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-6">Bot Configuration</h1>
+        <form id="configForm" class="space-y-4">
+            <div>
+                <label class="block text-gray-700">Bot Token:</label>
+                <input type="text" name="token" class="w-full p-2 border rounded" required>
+            </div>
+            <div>
+                <label class="block text-gray-700">Channel ID:</label>
+                <input type="text" name="channelId" class="w-full p-2 border rounded" required>
+            </div>
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded">Save Configuration</button>
+        </form>
+        <div id="message" class="mt-4 text-center text-green-600"></div>
+    </div>
+    <script>
+        document.getElementById('configForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            const response = await fetch('/save-config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const message = await response.text();
+            document.getElementById('message').textContent = message;
+        });
+    </script>
+</body>
+</html>
