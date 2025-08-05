@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Bot Config Panel</title>
+    <title>Discord Bot Panel</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
     <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h1 class="text-2xl font-bold mb-6">Bot Configuration</h1>
+        <h1 class="text-2xl font-bold mb-4">Bot Configuration</h1>
         <form id="configForm" class="space-y-4">
             <div>
                 <label class="block text-gray-700">Bot Token:</label>
@@ -20,20 +20,50 @@
             </div>
             <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded">Save Configuration</button>
         </form>
+
+        <h2 class="text-xl font-bold mt-8 mb-4">Schedule a Message</h2>
+        <form id="messageForm" class="space-y-4">
+            <div>
+                <label class="block text-gray-700">Message Content:</label>
+                <textarea name="content" class="w-full p-2 border rounded" required></textarea>
+            </div>
+            <div>
+                <label class="block text-gray-700">Day (e.g., Monday):</label>
+                <input type="text" name="day" class="w-full p-2 border rounded" required>
+            </div>
+            <div>
+                <label class="block text-gray-700">Time (HH:MM, 24h):</label>
+                <input type="text" name="time" class="w-full p-2 border rounded" required>
+            </div>
+            <button type="submit" class="w-full bg-green-500 text-white py-2 rounded">Add Message</button>
+        </form>
+
         <div id="message" class="mt-4 text-center text-green-600"></div>
     </div>
+
     <script>
         document.getElementById('configForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
-
             const response = await fetch('/save-config', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
+            const message = await response.text();
+            document.getElementById('message').textContent = message;
+        });
 
+        document.getElementById('messageForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            const response = await fetch('/add-message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
             const message = await response.text();
             document.getElementById('message').textContent = message;
         });
